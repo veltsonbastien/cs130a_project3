@@ -10,4 +10,4 @@ avlTree.o: avlTree.cpp
 	g++ -c $(CXX_FLAG) avlTree.cpp avlTree.h
 
 clean: 
-	rm -f project3 avlTree *.o
+	rm -f project3 avlTree *.o *.out *.gch

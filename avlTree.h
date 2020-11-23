@@ -1,7 +1,7 @@
 #ifndef AVLTREE_H
 #define AVLTREE_H 
 
-#include <iostream> 
+
 using namespace std; 
 
 class AVLTree{
