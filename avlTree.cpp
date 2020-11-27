@@ -5,7 +5,9 @@ using namespace std;
 
 //Constructors
 AVLTree::AVLTree() : root(0) {} 
-AVLTree::AVLTree(int k) {}
+AVLTree::AVLTree(int k) {
+    this->k = k; 
+}
 
 
 //Destructor 
