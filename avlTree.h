@@ -27,7 +27,10 @@ class AVLTree{
         Node(int v = 0): a(0), b(0), parent(0), left(0), right(0) {}
     }; 
 
+    //Private Member variables: 
     Node* root;
+    int k; //the k that is passed in 
+
     //Other Utility Functions:
     bool balanceCheck(Node* n);
     void rotateLeft(Node* problemNode); 
