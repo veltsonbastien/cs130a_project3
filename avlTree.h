@@ -1,14 +1,14 @@
 #ifndef AVLTREE_H
 #define AVLTREE_H 
 
-
-using namespace std; 
+//#include <iostream>
+//using namespace std; 
 
 class AVLTree{
  public: 
  AVLTree();      //constructor 
  AVLTree(int k); //constructor taking k as a parameter 
- ~AVLTree();     //destructor 
+ //~AVLTree();     //destructor 
  
  //Method Functions: 
  bool search(int a, int b);  
@@ -24,7 +24,13 @@ class AVLTree{
         int a; //whole value 
         int b; //fraction value 
         Node *parent, *right, *left; 
-        Node(int v = 0): a(0), b(0), parent(0), left(0), right(0) {}
+        Node(int whole, int fraction) {
+            a = whole; 
+            b = fraction;
+            parent = nullptr;
+            right = nullptr;
+            left = nullptr;
+        }
     }; 
 
     //Private Member variables: 

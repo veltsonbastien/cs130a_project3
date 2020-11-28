@@ -1,4 +1,4 @@
-CXX_FLAG = --std=c++11 -g 
+CXX_FLAG += --std=c++11 -g -Wall -W -Werror
 
 project3.out: project3.o avlTree.o 
 	g++ $(CXX_FLAG) -o project3.out project3.o avlTree.o
