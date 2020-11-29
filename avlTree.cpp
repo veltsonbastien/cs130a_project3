@@ -6,7 +6,9 @@ using namespace std;
 
 
 //Constructors
-AVLTree::AVLTree() : root(0) {} 
+AVLTree::AVLTree() : root(0) {
+    cout <<"hi"<<endl;
+} 
 AVLTree::AVLTree(int k) {
     root = nullptr;
     this->k = k; 
@@ -45,6 +47,6 @@ void AVLTree::rotateLeft(Node* n){}
 
 void AVLTree::rotateRight(Node* n){ }
 
-AVLTree::Node* AVLTree::getSuccessorNode(Node* n){ }
+AVLTree::Node* AVLTree::getSuccessorNode(Node* n){ return 0; }
 
-AVLTree::Node* AVLTree::getPredecessorNode(Node* n){ }
+AVLTree::Node* AVLTree::getPredecessorNode(Node* n){ return 0; }
