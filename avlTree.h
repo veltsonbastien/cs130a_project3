@@ -27,8 +27,7 @@ class AVLTree{
         int a; //whole value 
         int b; //fraction value 
         Node *parent, *right, *left; 
-        //int leftheight; //height on the left
-       // int rightheight; //height on the right
+        Node(){}
         Node(int whole, int fraction) {
             a = whole; 
             b = fraction;
@@ -49,8 +48,11 @@ class AVLTree{
     Node* searcher(int a, int b, Node* n);  
     Node* approx_searcher(int a, int b, Node* n);
     Node* insert(int a, int b, Node* n);
+    void in_order(Node* n); 
+    void pre_order(Node* n); 
     Node* getSuccessorNode(Node* n); 
     Node* getPredecessorNode(Node* n); 
+    int getHeight(Node* n); 
 
 }; 
 
