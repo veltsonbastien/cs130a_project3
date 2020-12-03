@@ -40,9 +40,9 @@ void AVLTree::in_order(){
 }
 
 void AVLTree::in_order(Node* n){
- if(n->left) in_order(n->left);
- cout<<n->a<<"."<<n->b<<" "; 
- if(n->right) in_order(n->right);
+ if(n->left) {in_order(n->left); cout<<" "; }
+ cout<<n->a<<"."<<n->b;
+ if(n->right){ cout<<" "; in_order(n->right); }
 }
 
 void AVLTree::pre_order(){
@@ -56,7 +56,7 @@ void AVLTree::pre_order(){
 void AVLTree::pre_order(Node* n){
  if(n){
     if(n==root) cout<<n->a<<"."<<n->b; 
-    cout<<" "<<n->a<<"."<<n->b; 
+    else{cout<<" "<<n->a<<"."<<n->b;}
     pre_order(n->left); 
     pre_order(n->right); 
    }
