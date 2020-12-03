@@ -4,6 +4,12 @@
 //#include <iostream>
 //using namespace std; 
 
+#include <cstring>
+#include <string>
+#include <vector>
+#include <utility> 
+using namespace std; 
+
 class AVLTree{
  public: 
  AVLTree();      //constructor 
@@ -17,7 +23,8 @@ class AVLTree{
  bool remove(int a, int b); 
  void in_order(); 
  void pre_order(); 
- 
+     
+     
  //Public utility
  double numify(int a, int b);
 
@@ -48,12 +55,11 @@ class AVLTree{
     Node* searcher(int a, int b, Node* n);  
     Node* approx_searcher(int a, int b, Node* n);
     Node* insert(int a, int b, Node* n);
+    Node* remove(int a, int b, Node* n);
     void in_order(Node* n); 
     void pre_order(Node* n); 
-    Node* getSuccessorNode(Node* n); 
-    Node* getPredecessorNode(Node* n); 
     int getHeight(Node* n); 
-
+    Node* getSuccessor(Node* n); 
 }; 
 
 #endif
