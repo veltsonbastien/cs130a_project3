@@ -1,8 +1,8 @@
 CXX_FLAG = --std=c++11 -g
 CC = g++
 
-project3: avlTree.cpp project3.cpp
-	g++ avlTree.cpp project3.cpp -o project3.out
+project3: avlTree.o project3.o
+	g++ avlTree.o project3.o -o project3.out 
 
 project3.o: project3.cpp
 	g++ -c $(CXX_FLAG) project3.cpp
