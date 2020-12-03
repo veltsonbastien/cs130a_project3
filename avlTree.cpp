@@ -19,6 +19,19 @@ AVLTree::AVLTree(int k) {
 
 //Utilities: 
 
+void AVLTree::printNode(Node* n){
+    cout<<"******************"<<endl;
+    if(!n) cout<<"NODE IS NULL!"<<endl;
+    cout<<"NODE IS: "<<n->a<<"."<<n->b<<endl; 
+    if(n->parent) cout<<"NODE's PARENT IS: "<<n->parent->a<<"."<<n->parent->b<<endl; 
+    else cout<<"NODE DOESN'T HAVE A PARENT"<<endl;
+    if(n->left) cout<<"NODE's LEFT IS: "<<n->left->a<<"."<<n->left->b<<endl; 
+    else cout<<"NODE DOESN'T HAVE A LEFT"<<endl;
+    if(n->right) cout<<"NODE's RIGHT IS: "<<n->right->a<<"."<<n->right->b<<endl; 
+    else cout<<"NODE DOESN'T HAVE A RIGHT"<<endl;
+    cout<<"******************"<<endl;
+}
+
 //Prints: 
 void AVLTree::in_order(){
   if(!root) return; 
@@ -43,6 +56,7 @@ void AVLTree::pre_order(){
 void AVLTree::pre_order(Node* n){
  if(n){
     cout<<n->a<<"."<<n->b<<" "; 
+    //printNode(n); 
     pre_order(n->left); 
     pre_order(n->right); 
    }
@@ -54,22 +68,62 @@ void AVLTree::rotateLeft(Node* problemNode){
     Node*  rightNodeTemp = problemNode->right;  
     //If not Root:
     if(problemNode->parent){ 
-        Node*& problemParent = problemNode->parent;                                           //set problem node parent temp
-        if(problemParent->left == problemNode) problemParent->left = rightNode;               //set problem node parent LEFT to problem node left
-        else problemParent->right = rightNode;                                         //set problem node parent RIGHT  to problem node left 
-        rightNode->parent = problemParent;                    //set the problem node right parent to the problem node's parent
-        if(rightNode->left){                                  //if the problem node's right child has a left child, it needs to get adopted 
-            Node*& childToAdopt = rightNode->left;            //create a ref. for the child to adopt
+        Node*& problemParent = problemNode->parent;                                           //set problem node parent temp     
+                                                                                              //check for Double Rotation:                                                                                    
+        if( (rightNodeTemp->left !=nullptr || rightNodeTemp->right != nullptr)                //If either or isn't null continue checking 
+        && (
+            (rightNodeTemp->left != nullptr && rightNodeTemp->right != nullptr                //if the left and the right one aren't null 
+             && (getHeight(rightNodeTemp->left) > getHeight(rightNodeTemp->right)))           //and the left is bigger than the right, there's a double rotation
+        || (rightNodeTemp->left !=nullptr && rightNode->right == nullptr))                    // or if the left one isn't null but the right one is
+        ){            
+
+        Node* rightLeftNodeTemp = problemNode->right->left;        //set a node copy for the right left node, it'll become the new "root" of this mini tree
+        Node* rlnAdoptChildRight = nullptr;                        //child to adopt on the right (in the case of k>1 ) 
+        Node* rlnAdoptChildLeft = nullptr;                         //child to adopt on the left  (in the case of k>1 )
+        problemParent->right = rightLeftNodeTemp;                  //set the the parent's right to the right left node 
+        rightLeftNodeTemp->parent = problemParent;                 //set the right left node's parent to the problem parent to complete the mutual 
+        if(rightLeftNodeTemp->right){                              //this means there is a child/tree on the right that has to be adopted 
+         rlnAdoptChildRight = rightLeftNodeTemp->right;            //initialize our right child adopt variable to this 
+        }
+        if(rightLeftNodeTemp->left){                               //this means there is a child/tree on the left that has to be adopted 
+         rlnAdoptChildLeft = rightLeftNodeTemp->left;              //initialize our right child adtoip variable to this 
+        }
+        
+        rightLeftNodeTemp->left = problemNode;                     //set the left of that rln node to the problem node
+        problemNode->parent = rightLeftNodeTemp;                   //set the parent of problemNode to rln 
+         
+        rightLeftNodeTemp->right = rightNodeTemp;                  //set the rln right to right node temp 
+        rightNodeTemp->parent = rightLeftNodeTemp;                 //set the parent of right node temp to rln
+
+        if(rlnAdoptChildRight) rightNodeTemp->left = rlnAdoptChildRight; //if there was a child to adopt on right, it goes on the left side of right node temp 
+        else rightNodeTemp->left = nullptr; 
+        if(rlnAdoptChildLeft)  problemNode->right = rlnAdoptChildLeft;   //if there was a child to adopt on left, it goes on the right side of problem node 
+        else problemNode->right = nullptr; 
+
+        return; 
+        } //end of double rotation check 
+
+        if(problemParent->left == problemNode) problemParent->left = rightNodeTemp;               //set problem node parent LEFT to problem node left
+        else problemParent->right = rightNodeTemp;                                         //set problem node parent RIGHT  to problem node left 
+
+        rightNodeTemp->parent = problemParent;                    //set the problem node right parent to the problem node's parent
+        if(rightNodeTemp->left){                                  //if the problem node's right child has a left child, it needs to get adopted 
+            Node* childToAdopt = rightNodeTemp->left;            //create a ref. for the child to adopt
             childToAdopt->parent = problemNode;              //set the adopted child's parent to the problem node 
+            rightNodeTemp->left = problemNode;                   //set the right node's left to problem node
             problemNode->right = childToAdopt;                //set the problem Node right to the child to adopt
-            problemNode->parent =  rightNode;                //set the problem node's parent to the problem node's right child 
-            rightNode->left = problemNode;                   //set the right node's left to problem node
+            problemNode->parent =  rightNodeTemp;                //set the problem node's parent to the problem node's right child 
             //pre_order(); //do a preorder print to check
            // cout<<"ROTATION FINISHED"<<endl<<endl;
             return; //done rotating
         } else{                                          //if no child to adopt,
+            problemNode->parent = rightNodeTemp;                //problem node's parent becomes right node 
+            rightNodeTemp->left = new Node(); 
+            rightNodeTemp->left = problemNode; 
             problemNode->right = nullptr;                   //problem node's right becomes nullptr because there's no child to adopt
-            problemNode->parent = rightNode;                //problem node's parent becomes right node 
+            
+           // rightNode->left = new Node();
+           // rightNode->left = problemNode;
             //pre_order(); //do a preorder print to check
            // cout<<"ROTATION FINISHED"<<endl<<endl;
             return; //done rotating
@@ -79,23 +133,23 @@ void AVLTree::rotateLeft(Node* problemNode){
 
     //IF ROOT:
         //cout<<"Rotating Root to the LEFT"<<endl; 
-        if(rightNode->left){                                //problem node right child had a left child that needs to be adopted
-            Node*& childToAdopt = rightNode->left;          //set a temp variable for child to adopt 
+        if(rightNodeTemp->left){                                //problem node right child had a left child that needs to be adopted
+            Node*& childToAdopt = rightNodeTemp->left;          //set a temp variable for child to adopt 
             childToAdopt->parent = problemNode;             //problem node becomes the new parent of the adopted node 
             problemNode->right = childToAdopt;              //problem node right child is equal to child that needs to be adopted
             problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent
-            problemNode->parent = rightNode;                //problem node parent becomes right node
-            rightNode->left = problemNode;                  //right node's left becomes problemNode
-            rightNode->parent = nullptr;                    //right node's parent becomes a nullptr because it is the new root 
+            problemNode->parent = rightNodeTemp;                //problem node parent becomes right node
+            rightNodeTemp->left = problemNode;                  //right node's left becomes problemNode
+            rightNodeTemp->parent = nullptr;                    //right node's parent becomes a nullptr because it is the new root 
             root = rightNodeTemp;                               //set right node to the new root 
            //pre_order(); //do a preorder print to check
             //cout<<"ROTATION FINISHED"<<endl<<endl;
             return; //done with rotation
         } else{                                             //if no child needs to be adopted
-            rightNode->parent = nullptr;                    //right node's parent is nullptr because it becomes the new root 
-            rightNode->left = problemNode;                  //right node's left becomes the problem node 
+            rightNodeTemp->parent = nullptr;                    //right node's parent is nullptr because it becomes the new root 
+            rightNodeTemp->left = problemNode;                  //right node's left becomes the problem node 
             problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent 
-            problemNode->parent = rightNode;              //problem node's parent becomes right node 
+            problemNode->parent = rightNodeTemp;              //problem node's parent becomes right node 
             problemNode->right = nullptr;                   //get rid of any connection problem node had to the right 
             root = rightNodeTemp;
           //  pre_order(); //do a preorder print to check
@@ -106,27 +160,30 @@ void AVLTree::rotateLeft(Node* problemNode){
 }
 
 void AVLTree::rotateRight(Node* problemNode){
-    Node*& leftNode = problemNode->left;      //make a copy of the right node 
+    Node*& leftNode = problemNode->left;      //make a copy of the left node 
     Node* leftNodeTemp = problemNode->left;
+
+
     //If not Root:
     if(problemNode->parent){ 
         Node*& problemParent = problemNode->parent;                                           //set problem node parent temp
-        if(problemParent->left == problemNode) problemParent->left = leftNode;               //set problem node parent LEFT to problem node left
-        else problemParent->right = leftNode;                                         //set problem node parent RIGHT  to problem node left 
-        leftNode->parent = problemParent;                    //set the problem node right parent to the problem node's parent
+        if(problemParent->left == problemNode) problemParent->left = leftNodeTemp;               //set problem node parent LEFT to problem node left
+        else problemParent->right = leftNodeTemp;                                         //set problem node parent RIGHT  to problem node left 
+        leftNodeTemp->parent = problemParent;                    //set the problem node right parent to the problem node's parent
         if(leftNode->right){                                  //if the problem node's left child has a right child, it needs to get adopted 
-            Node*& childToAdopt = leftNode->right;            //create a ref. for the child to adopt
+            Node*& childToAdopt = leftNodeTemp->right;            //create a ref. for the child to adopt
             childToAdopt->parent = problemNode;              //set the adopted child's parent to the problem node 
             problemNode->left = childToAdopt;                //set the problem Node left to the child to adopt
-            problemNode->parent =  leftNode;                //set the problem node's parent to the problem node's left child 
-            leftNode->right = problemNode;                   //set the left node's right to problem node
+            problemNode->parent =  leftNodeTemp;                //set the problem node's parent to the problem node's left child 
+            leftNodeTemp->right = problemNode;                   //set the left node's right to problem node
            // pre_order(); //do a preorder print to check
            // cout<<"ROTATION FINISHED"<<endl<<endl;
             return; //done rotating
         } else{                                          //if no child to adopt,
+            problemNode->parent = leftNodeTemp;                //problem node's parent becomes right node 
+            leftNodeTemp->right = new Node(); 
+            leftNodeTemp->right = problemNode; 
             problemNode->left = nullptr;                   //problem node's left becomes nullptr because there's no child to adopt
-            problemNode->parent = leftNode;                //problem node's parent becomes right node 
-           // pre_order(); //do a preorder print to check
            // cout<<"ROTATION FINISHED"<<endl<<endl;
          return; //done rotating
         }
@@ -135,23 +192,23 @@ void AVLTree::rotateRight(Node* problemNode){
 
     //IF ROOT:
        // cout<<"Rotating Root to the RIGHT"<<endl; 
-        if(leftNode->right){                                //problem node left child had a right child that needs to be adopted
-            Node*& childToAdopt = leftNode->right;          //set a temp variable for child to adopt 
+        if(leftNodeTemp->right){                                //problem node left child had a right child that needs to be adopted
+            Node*& childToAdopt = leftNodeTemp->right;          //set a temp variable for child to adopt 
             childToAdopt->parent = problemNode;             //problem node becomes the new parent of the adopted node 
             problemNode->left = childToAdopt;              //problem node left child is equal to child that needs to be adopted
             problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent
-            problemNode->parent = leftNode;                //problem node parent becomes left node
-            leftNode->right = problemNode;                  //left node's right become a nullptr cause problem node adopted it on it's right 
-            leftNode->parent = nullptr;                    //left node's parent becomes a nullptr because it is the new root 
+            problemNode->parent = leftNodeTemp;                //problem node parent becomes left node
+            leftNodeTemp->right = problemNode;                  //left node's right become a nullptr cause problem node adopted it on it's right 
+            leftNodeTemp->parent = nullptr;                    //left node's parent becomes a nullptr because it is the new root 
             root = leftNodeTemp;                               //set left node to the new root 
            // pre_order(); //do a preorder print to check
            // cout<<"ROTATION FINISHED"<<endl<<endl;
             return; //done with rotation
         } else{                                             //if no child needs to be adopted
-            leftNode->parent = nullptr;                    //left node's parent is nullptr because it becomes the new root 
-            leftNode->right = problemNode;                  //left node's right becomes the problem node 
+            leftNodeTemp->parent = nullptr;                    //left node's parent is nullptr because it becomes the new root 
+            leftNodeTemp->right = problemNode;                  //left node's right becomes the problem node 
             problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent 
-            problemNode->parent = leftNode;                //problem node's parent becomes left node 
+            problemNode->parent = leftNodeTemp;                //problem node's parent becomes left node 
             problemNode->left = nullptr;                   //get rid of any connection problem node had to the left 
             root = leftNodeTemp;                               //set left node to the new root
            // if(root){cout<<"hi, there's a root after i set the root"<<endl;}
@@ -190,7 +247,7 @@ bool AVLTree::balanceCheck(Node* n){
 
         if(n == root){
             if( abs(leftHeight - rightHeight) <= this->k ){
-                //cout<<"PROPERTY NOT BROKEN at ROOT"<<endl<<endl;
+              //  cout<<"PROPERTY NOT BROKEN at ROOT"<<endl<<endl;
                 //pre_order(); 
                 return true; //this is where you force it to stop
             } else if (leftHeight > rightHeight){
@@ -198,20 +255,20 @@ bool AVLTree::balanceCheck(Node* n){
                 rotateRight(n); 
                 return balanceCheck(n); 
             } 
-               // cout<<"PROPERTY BROKEN at ROOT: Right side is heavier, doing a root rotation to the left"<<endl<<endl; 
+                //cout<<"PROPERTY BROKEN at ROOT: Right side is heavier, doing a root rotation to the left"<<endl<<endl; 
                 rotateLeft(n); 
                 return balanceCheck(n); 
         }
 
         if( abs(leftHeight - rightHeight) <= this->k ){
-       // cout<<"PROPERTY NOT BROKEN"<<endl<<endl;
+        //cout<<"PROPERTY NOT BROKEN"<<endl<<endl;
         return balanceCheck(n->parent); 
         } else if (leftHeight > rightHeight){
-       // cout<<"PROPERTY BROKEN: Left side is heavier, doing a rotation to the right"<<endl<<endl; 
+        //cout<<"PROPERTY BROKEN at"<<n->a<<","<<n->b<<": Left side is heavier, doing a rotation to the right"<<endl<<endl; 
         rotateRight(n); 
         return balanceCheck(n->parent); 
         } 
-        //cout<<"PROPERTY BROKEN: Right side is heavier, doing a rotation to the left"<<endl<<endl; 
+       // cout<<"PROPERTY BROKEN at"<<n->a<<","<<n->b<<": Right side is heavier, doing a rotation to the left"<<endl<<endl; 
         rotateLeft(n); 
         return balanceCheck(n->parent); 
 } //end of balance check

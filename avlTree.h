@@ -60,6 +60,7 @@ class AVLTree{
     void pre_order(Node* n); 
     int getHeight(Node* n); 
     Node* getSuccessor(Node* n); 
+    void printNode(Node* n); 
 }; 
 
 #endif
