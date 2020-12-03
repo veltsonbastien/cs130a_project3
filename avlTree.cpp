@@ -55,8 +55,8 @@ void AVLTree::pre_order(){
 
 void AVLTree::pre_order(Node* n){
  if(n){
-    cout<<n->a<<"."<<n->b<<" "; 
-    //f(n); 
+    if(n==root) cout<<n->a<<"."<<n->b; 
+    cout<<" "<<n->a<<"."<<n->b; 
     pre_order(n->left); 
     pre_order(n->right); 
    }
@@ -370,7 +370,7 @@ bool AVLTree::balanceCheck(Node* n){
               //  pre_order(); 
                 return balanceCheck(n); 
             } 
-                cout<<"PROPERTY BROKEN at ROOT: Right side is heavier, doing a root rotation to the left"<<endl<<endl; 
+                //cout<<"PROPERTY BROKEN at ROOT: Right side is heavier, doing a root rotation to the left"<<endl<<endl; 
                 rotateLeft(n); 
               //  pre_order();
                 return balanceCheck(n); 
