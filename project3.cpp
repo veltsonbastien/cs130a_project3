@@ -68,6 +68,8 @@ int main(int argc, char* argv[]){
         commands.push_back(token);
         argument.erase(0, pos + delimiter.length());
  }
+ token = argument.substr(0, argument.length()); 
+ commands.push_back(token); 
 
  for(string s: commands){
     std::string func_delimiter = " ";
@@ -87,6 +89,8 @@ int main(int argc, char* argv[]){
             funcArgs.push_back(arg); 
             s.erase(0, func_pos+func_delimiter.length()); 
         }
+        func_token = s.substr(0, s.length()); 
+        funcArgs.push_back( stoi(func_token) );
         avl.insert(funcArgs[0], funcArgs[1]); 
     }
  }
