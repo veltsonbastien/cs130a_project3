@@ -64,6 +64,7 @@ void AVLTree::pre_order(Node* n){
 
 
 void AVLTree::rotateLeft(Node* problemNode){
+
     Node*& rightNode = problemNode->right;      //make a copy of the right node 
     Node*  rightNodeTemp = problemNode->right;  
     //If not Root:
@@ -135,7 +136,6 @@ void AVLTree::rotateLeft(Node* problemNode){
 
     //IF ROOT:
         //cout<<"Rotating Root to the LEFT"<<endl; 
-
        if( (rightNodeTemp->left !=nullptr || rightNodeTemp->right != nullptr)                //If either or isn't null continue checking 
         && (
             (rightNodeTemp->left != nullptr && rightNodeTemp->right != nullptr                //if the left and the right one aren't null 
@@ -210,7 +210,6 @@ void AVLTree::rotateRight(Node* problemNode){
              && (getHeight(leftNodeTemp->right) > getHeight(leftNodeTemp->left)))           //and the left is bigger than the right, there's a double rotation
         || (leftNodeTemp->right !=nullptr && leftNodeTemp->left == nullptr))                    // or if the left one isn't null but the right one is
         ){            
-
         // printNode(problemNode); 
         // printNode(leftNodeTemp); 
         
@@ -278,7 +277,8 @@ void AVLTree::rotateRight(Node* problemNode){
             (leftNodeTemp->right != nullptr && leftNodeTemp->left != nullptr                //if the left and the right one aren't null 
              && (getHeight(leftNodeTemp->right) > getHeight(leftNodeTemp->left)))           //and the left is bigger than the right, there's a double rotation
         || (leftNodeTemp->right !=nullptr && leftNodeTemp->left == nullptr))                    // or if the left one isn't null but the right one is
-        ){            
+        ){  
+        
 
         Node* leftRightNodeTemp = problemNode->left->right;        //set a node copy for the left right node, it'll become the new "root" of this mini tree
         Node* lrnAdoptChildRight = nullptr;                        //child to adopt on the right (in the case of k>1 ) 
@@ -296,10 +296,12 @@ void AVLTree::rotateRight(Node* problemNode){
          
         leftRightNodeTemp->left = leftNodeTemp;                  //set the lrn left to left node temp 
         leftNodeTemp->parent = leftRightNodeTemp;                 //set the parent of left node temp to lrn
-
-        if(lrnAdoptChildLeft) leftNodeTemp->right = lrnAdoptChildRight; //if there was a child to adopt on left, it goes on the right side of left node temp 
+         
+        //printNode(lrnAdoptChildLeft);
+        //printNode(lrnAdoptChildRight);
+        if(lrnAdoptChildLeft) leftNodeTemp->right = lrnAdoptChildLeft; //if there was a child to adopt on left, it goes on the right side of left node temp 
         else leftNodeTemp->right = nullptr; 
-        if(lrnAdoptChildRight)  problemNode->left = lrnAdoptChildLeft;   //if there was a child to adopt on right, it goes on the left side of problem node 
+        if(lrnAdoptChildRight)  problemNode->left = lrnAdoptChildRight;   //if there was a child to adopt on right, it goes on the left side of problem node 
         else problemNode->left = nullptr; 
 
         root = leftRightNodeTemp;                                   //set lrn to root 
@@ -348,15 +350,13 @@ int AVLTree::getHeight(Node* n){
 }
 
 bool AVLTree::balanceCheck(Node* n){ 
-
        if(!n) return false; 
-
         int leftHeight = getHeight(n->left);
         int rightHeight = getHeight(n->right); 
-        // cout<<endl<<endl;
-        // cout<<"Checking heights at "<<n->a<<"."<<n->b<<endl;
-        // cout<<"Left Height: "<<leftHeight<<endl;
-        // cout<<"Right Height: "<<rightHeight<<endl;
+       //  cout<<endl<<endl;
+       //  cout<<"Checking heights at "<<n->a<<"."<<n->b<<endl;
+       //  cout<<"Left Height: "<<leftHeight<<endl;
+      //   cout<<"Right Height: "<<rightHeight<<endl;
         // cout<<endl<<endl;
 
         if(n == root){
@@ -402,6 +402,8 @@ bool AVLTree::approx_search(int a, int b){
    //cout<<"for dev purposes: tree is empty"<<endl;
    return 0; 
  }
+ Node* approx_node = approx_searcher(a, b, root);
+ cout<<"closest to "<<a<<"."<<b<<" is "<<approx_node->a<<"."<<approx_node->b<<endl;
  return approx_searcher(a, b, root); 
 }
 
@@ -433,7 +435,7 @@ AVLTree::Node* AVLTree::approx_searcher(int a, int b, Node* n){
              return (differenceBetweenCurrent <= differenceBetweenParent) ? n: n->parent;
          } 
         // cout<<"there was no parent, so we just return the current"<<endl; 
-        // cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
+        //cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
         return n; 
        }
    } else {
@@ -447,11 +449,11 @@ AVLTree::Node* AVLTree::approx_searcher(int a, int b, Node* n){
              //cout<<"there is a parent, so we check the distances"<<endl;
              int differenceBetweenCurrent = abs( numify(n->a, n->b) - numify(a,b)  ); 
              int differenceBetweenParent =  abs( numify(n->parent->a, n->parent->b) - numify(a,b) ); 
-             //cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
+          //   cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
              return (differenceBetweenCurrent <= differenceBetweenParent) ? n: n->parent;
          } 
          //cout<<"there was no parent, so we just return the current"<<endl; 
-         //cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
+        // cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
          return n; 
      }
    } 
@@ -465,11 +467,12 @@ AVLTree::Node* AVLTree::approx_searcher(int a, int b, Node* n){
             } else{
                 //cout<<"the left child was empty, so wecheck which it's closest to: parent, or parent's parent"<<endl;
                 if(n->parent){
-                    cout<<"there is a parent, so we check the distances"<<endl;
+                    //cout<<"there is a parent, so we check the distances"<<endl;
                     int differenceBetweenCurrent = abs( numify(n->a, n->b) - numify(a,b)  ); 
                     int differenceBetweenParent =  abs( numify(n->parent->a, n->parent->b) - numify(a,b) ); 
-                    if(differenceBetweenCurrent <= differenceBetweenParent) cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
-                    else{cout<<"closest to "<<a<<"."<<b<<" is "<<n->parent->a<<"."<<n->parent->b<<endl<<endl; }
+                    // if(differenceBetweenCurrent <= differenceBetweenParent) //cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
+                    // else{ //cout<<"closest to "<<a<<"."<<b<<" is "<<n->parent->a<<"."<<n->parent->b<<endl<<endl; 
+                    // }
                     
                     return (differenceBetweenCurrent <= differenceBetweenParent) ? n: n->parent;
                 } 
@@ -488,13 +491,14 @@ AVLTree::Node* AVLTree::approx_searcher(int a, int b, Node* n){
                    //cout<<"there is a parent, so we check the distances"<<endl;
                     int differenceBetweenCurrent = abs( numify(n->a, n->b) - numify(a,b)  ); 
                     int differenceBetweenParent =  abs( numify(n->parent->a, n->parent->b) - numify(a,b) );  
-                    if(differenceBetweenCurrent <= differenceBetweenParent) cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
-                    else{ cout<<"closest to "<<a<<"."<<b<<" is "<<n->parent->a<<"."<<n->parent->b<<endl<<endl; }
+                    // if(differenceBetweenCurrent <= differenceBetweenParent) cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
+                    // else{ //cout<<"closest to "<<a<<"."<<b<<" is "<<n->parent->a<<"."<<n->parent->b<<endl<<endl;
+                    //  }
                     
                     return (differenceBetweenCurrent <= differenceBetweenParent) ? n: n->parent;
                 } 
                 //cout<<"there was no parent, so we just return the current"<<endl; 
-                cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
+                //cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
                 return n; 
             }     
         }
@@ -605,6 +609,34 @@ AVLTree::Node* AVLTree::insert(int a, int b, Node* n){
 
 } //end of insert function 
 
+
+//get successor
+AVLTree::Node* AVLTree::getPredecessor(Node* n){
+    Node* temp = 0; 
+    if(n->left != nullptr){
+        temp = n->left; 
+        while(temp->right != nullptr){
+        temp = temp->right; 
+        }//end of while 
+        return temp; 
+    } else{
+        Node* temp2 = root; 
+	    while( numify(n->a, n->b) != numify(temp2->a, temp2->b) ){
+            if( numify(n->a, n->b) >= numify(temp2->a, temp2->b)){
+                temp = temp2; 
+                temp2 = temp2->right; 
+            }//end of if check 
+            else{
+                temp2 = temp2->left;
+            }
+	    }//end of second while 
+        //printNode(temp); 
+        return temp; 	
+      }
+      return root;  
+}
+
+
 //get successor
 AVLTree::Node* AVLTree::getSuccessor(Node* n){
     Node* temp = 0; 
@@ -632,16 +664,16 @@ AVLTree::Node* AVLTree::getSuccessor(Node* n){
 }
 
 AVLTree::Node* AVLTree::deleteBalanceChecker(Node* n){
-    if(n == nullptr) return nullptr; 
-    if(n->left == nullptr && n->right == nullptr ) return n; 
-    if(n->left && n->right == nullptr)  deleteBalanceChecker(n->left); 
-    if(n->right && n->left == nullptr) deleteBalanceChecker(n->right); 
+    if(n == nullptr || n==root) return nullptr; 
+    if(n->left == nullptr && n->right == nullptr ) { return n; } 
+    if(n->left !=nullptr && n->right == nullptr) {  deleteBalanceChecker(n->left); }
+    if(n->right !=nullptr && n->left == nullptr) deleteBalanceChecker(n->right); 
     if(n->right && n->left){
           if( getHeight(n->right) > getHeight(n->left) ) deleteBalanceChecker(n->right); 
      else if( getHeight(n->left) > getHeight(n->right) ) deleteBalanceChecker(n->left); 
-     else deleteBalanceChecker(n->right); 
     }
-    return nullptr; 
+    
+    return deleteBalanceChecker(n->right); 
 }
 
 bool AVLTree::deleteBalanceCheck(Node* n){
@@ -659,35 +691,43 @@ bool AVLTree::remove(int a, int b){
 AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
     if(a == n->a && b == n->b){                                       //we found  the node, so we proceed to delete
      Node* successorNode = getSuccessor(n);                           //first thing we do is get the sucessor
+    // printNode(n); 
      Node* temp = n;                                                  //make a copy of the n
-
      if(n->parent){                                                     //IF there is a parent (aka it's not root)
-
         Node* parentTemp = n->parent;                                     //save the parent (if it has one)
         if(successorNode == nullptr){                                    //if that sucessor is a nullptr, we are able to delete it right off the bat 
-        if(temp->left){                                               //if it has anything on the left, make sure you don't throw that away, it won't have anything on the right
-            n->parent->right = temp->left;                              //set the node's parent's right to that
-            temp->left->parent = n->parent;                             //set the left child's parent to node's parent 
+            if(temp->left){                                               //if it has anything on the left, make sure you don't throw that away, it won't have anything on the right
+                n->parent->right = temp->left;                              //set the node's parent's right to that
+                temp->left->parent = n->parent;                             //set the left child's parent to node's parent 
+                cout<<n->a<<"."<<n->b<<" deleted"<<endl;
+        
+
+                n->left = nullptr;                                          //remove everything from n then eventually delete it: 
+                n->right = nullptr; 
+                n->parent = nullptr; 
+                delete n; 
+                return parentTemp;                                          //return the parent to the delete balance check 
+            }
+            parentTemp->right = nullptr;                                  //if there was no left child/tree to take care of, we just delete it 
             cout<<n->a<<"."<<n->b<<" deleted"<<endl;
-            n->left = nullptr;                                          //remove everything from n then eventually delete it: 
+      
+            n->left = nullptr; 
             n->right = nullptr; 
             n->parent = nullptr; 
             delete n; 
-            return parentTemp;                                          //return the parent to the delete balance check 
-        }
-        parentTemp->right = nullptr;                                  //if there was no left child/tree to take care of, we just delete it 
-      cout<<n->a<<"."<<n->b<<" deleted"<<endl;
-        n->left = nullptr; 
-        n->right = nullptr; 
-         n->parent = nullptr; 
-        delete n; 
-        return parentTemp;                                           //return parent temp
+            return parentTemp;                                           //return parent temp
         } //end of if the sucessor is null
                                                                     //if it reaches here, there IS a successor:   
         if(n->left){                                                  //if n has a left child/tree that needs to be adopted do that 
+       
             Node* nLeftTemp = n->left;                                    //recrusively add it to the bottom of the left of the sucessor 
-            if(successorNode->left){
-            Node* snrTemp = successorNode->right;                       //set a temp of the successor node left for iterating 
+            if(successorNode == parentTemp){
+                successorNode->left = nLeftTemp; 
+                nLeftTemp->parent = successorNode; 
+            }
+
+            else if(successorNode->left){
+            Node* snrTemp = successorNode->left;                       //set a temp of the successor node left for iterating 
                 while(snrTemp){ 
                     if(snrTemp->left == nullptr){                           //if it reaches a nullptr 
                         snrTemp->left = new Node();                           //create a new node there 
@@ -704,15 +744,49 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
             }
         } //end of checking if there was a left to adopt in general
 
-        //if it reaches here, there was no left child so we can just focus on doing the main deletion
+        //if it reaches here, there was no left child so we can just focus on check if there's a right before doing deletion 
+
+        if(n->right && n->right != successorNode){ //if there is something to the right but it's not the successor node, there's a right tree to be adopted 
+         Node* nRightTemp = n->right; 
+         Node* snParentTemp = n->parent; 
+            if(successorNode->right){
+            Node* snrTemp = successorNode->right;                       //set a temp of the successor node left for iterating 
+                while(snrTemp){ 
+                    if(snrTemp->right == nullptr){                           //if it reaches a nullptr 
+                        snrTemp->right = new Node();                           //create a new node there 
+                        snrTemp->right = nRightTemp;                            //set the new node to the n left 
+                        nRightTemp->parent = snrTemp;                         //and set the parent of that n left to that thing 
+                        snParentTemp->left = nullptr; 
+                    }
+                }
+            } //end of checking if the successor node has a left 
+            else{
+                //if it gets here, then the sucessor node didn't have a left, so we can just stick it on there without a while loop 
+                successorNode->right = new Node(); 
+                successorNode->right = nRightTemp; 
+                nRightTemp->parent = successorNode; 
+                snParentTemp->left = nullptr;
+            }
+        } //end of if there's a right child/tree
+
         //check if it was a left or right child of it's parent 
+    
 
-        if(parentTemp->right == n) parentTemp->right = successorNode;     //its the right child set the right of that parent equal to the sucessor node 
-        else parentTemp->left = successorNode;                            //it was the left child  set the left of that parent equal to the sucessor node 
-
-        successorNode->parent = parentTemp;                               //in either case, set the succesor node parent to the parent temp 
-                                                                            //do normal deletion 
-       cout<<n->a<<"."<<n->b<<" deleted"<<endl;
+        if(successorNode != parentTemp){                                      //only do this if successor node is not equal to parent temp
+            if(parentTemp->right == n) parentTemp->right = successorNode;     //its the right child set the right of that parent equal to the sucessor node 
+            else parentTemp->left = successorNode;                            //it was the left child  set the left of that parent equal to the sucessor node 
+            successorNode->parent = parentTemp;                               //in either case, set the succesor node parent to the parent temp 
+        } 
+        
+         if( successorNode == parentTemp && (n->left==nullptr && n->right==nullptr) ){  //if the successor node is equal to the parent temp and there was no kids 
+            if(parentTemp->right == n) parentTemp->right = nullptr;     //its the right child set the right of that parent equal to the sucessor node 
+            else parentTemp->left = nullptr; 
+        }
+                                                                        //do normal deletion 
+        cout<<n->a<<"."<<n->b<<" deleted"<<endl;
+        
+       // printNode(n); 
+        //printNode(successorNode); 
         n->left = nullptr; 
         n->right = nullptr; 
         n->parent = nullptr; 
@@ -721,59 +795,88 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
 
      } //end of if we got an actual parent 
       
-    //if here, that means that its a root 
-    if(successorNode == nullptr){          //first check if the successor node is a nullptr
-     if(n->left){                          //we check if n has a left, if it does, set it as the root 
-      Node* nLeftTemp = n->left;           //save the n- left in a temp 
-      nLeftTemp->parent = nullptr;         //get rid of it's parent affiliation 
-      root = nLeftTemp;                    //set the left temp to the root 
-      cout<<n->a<<"."<<n->b<<" deleted"<<endl;
-      n->left = nullptr;                   //clean up node as usual 
-      n->right = nullptr; 
-      delete n; 
-      return nLeftTemp;                    //return the left temp which should be root                
-     }
-     //at this point n doesn't have a left nor a sucessor meaning it's by itself, so we can just get rid of it and return a nullptr 
+    //if here, that means that its a ROOT 
+    Node* predecessorNode = getPredecessor(n); 
+    if(predecessorNode == nullptr && successorNode == nullptr){          //first check if the successor node is a nullptr
+    //  if(n->left){                          //we check if n has a left, if it does, set it as the root 
+    //   Node* nLeftTemp = n->left;           //save the n- left in a temp 
+    //   nLeftTemp->parent = nullptr;         //get rid of it's parent affiliation 
+    //   root = nLeftTemp;                    //set the left temp to the root 
+    //   cout<<n->a<<"."<<n->b<<" deleted"<<endl;
+    //   n->left = nullptr;                   //clean up node as usual 
+    //   n->right = nullptr; 
+    //   delete n; 
+    //   return nLeftTemp;                    //return the left temp which should be root                
+    //  }
+    //  //at this point n doesn't have a left nor a sucessor meaning it's by itself, so we can just get rid of it and return a nullptr 
      cout<<n->a<<"."<<n->b<<" deleted"<<endl;
      n->left = nullptr; 
      n->right = nullptr; 
      delete n; 
+     root = nullptr; 
+     delete root; 
      return nullptr;        
     }
-
-    //if we reach here, there is a sucessor node, we first check if the root had a left child/tree 
+    //if we reach here, there is a predecessor node and a successor node, we first check if the root had a left child/tree 
         if(n->left){                                                  //if n has a left child/tree that needs to be adopted do that 
             Node* nLeftTemp = n->left;                                    //recrusively add it to the bottom of the left of the sucessor 
-            if(successorNode->left){
-            Node* snrTemp = successorNode->right;                       //set a temp of the successor node left for iterating 
-                while(snrTemp){ 
-                    if(snrTemp->left == nullptr){                           //if it reaches a nullptr 
-                        snrTemp->left = new Node();                           //create a new node there 
-                        snrTemp->left = nLeftTemp;                            //set the new node to the n left 
-                        nLeftTemp->parent = snrTemp;                         //and set the parent of that n left to that thing 
+            if(predecessorNode->left){
+            Node* pnlTemp = predecessorNode->left;                       //set a temp of the predecessor node left for iterating 
+                while(pnlTemp){ 
+                    if(pnlTemp->left == nullptr){                           //if it reaches a nullptr 
+                        pnlTemp->left = new Node();                           //create a new node there 
+                        pnlTemp->left = nLeftTemp;                            //set the new node to the n left 
+                        nLeftTemp->parent = pnlTemp;                         //and set the parent of that n left to that thing
+                        nLeftTemp->right = nullptr;  
                     }
                 }
             } //end of checking if the successor node has a left 
             else{
-                //if it gets here, then the sucessor node didn't have a left, so we can just stick it on there without a while loop
-                successorNode->left = new Node(); 
-                successorNode->left = nLeftTemp; 
-                nLeftTemp->parent = successorNode; 
+                //if it gets here, then the predecessor node didn't have a left, so we can just stick it on there without a while loop 
+              if(predecessorNode != nLeftTemp){
+                predecessorNode->left = new Node(); 
+                predecessorNode->left = nLeftTemp; 
+                nLeftTemp->parent = predecessorNode; 
+                nLeftTemp->right = nullptr; 
+              } 
             }
         } //end of checking if there was a left to adopt in general
-         //if it reached here, there was no child to the left, so we just focus on a deletion 
-        successorNode->parent = nullptr;                                    //in either case, set the succesor node parent to the nullptr since it's the root
-        root = successorNode;                                               //set the root to the successor node 
+         //if it reached here, there was no child to the left, so we now check if it had a right 
+        
+        if(n->right){ //if there is something to the right but it's not the successor node, there's a right tree to be adopted 
+         Node* nRightTemp = n->right; 
+            if(predecessorNode->right){
+            Node* pnrTemp = predecessorNode->right;                       //set a temp of the predecessor node right for iterating 
+                while(pnrTemp){ 
+                    if(pnrTemp->right == nullptr){                           //if it reaches a nullptr 
+                        pnrTemp->right = new Node();                           //create a new node there 
+                        pnrTemp->right = nRightTemp;                            //set the new node to the n left 
+                        nRightTemp->parent = pnrTemp;                         //and set the parent of that n left to that thing 
+                    }
+                }
+            } //end of checking if the successor node has a left 
+            else{
+                //if it gets here, then the sucessor node didn't have a left, so we can just stick it on there without a while loop 
+             if(predecessorNode->right != nRightTemp){
+                predecessorNode->right = new Node(); 
+                predecessorNode->right = nRightTemp; 
+                nRightTemp->parent = predecessorNode; 
+             }
+            }
+        } //end of if there's a right child/tree
+
+    
+        predecessorNode->parent = nullptr;                                    //in either case, set the succesor node parent to the nullptr since it's the root
+        root = predecessorNode;                                               //set the root to the successor node 
                                                                             //do normal deletion 
        cout<<n->a<<"."<<n->b<<" deleted"<<endl;
         n->left = nullptr; 
         n->right = nullptr; 
         n->parent = nullptr; 
         delete n; 
-        return successorNode;                                                //at the end return parent temp
+        return predecessorNode;                                                //at the end return parent temp
 
     } //end of making sure we got the actual node 
- 
     return nullptr;
 
 }
