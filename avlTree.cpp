@@ -668,6 +668,7 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
         if(temp->left){                                               //if it has anything on the left, make sure you don't throw that away, it won't have anything on the right
             n->parent->right = temp->left;                              //set the node's parent's right to that
             temp->left->parent = n->parent;                             //set the left child's parent to node's parent 
+            cout<<n->a<<"."<<n->b<<" deleted"<<endl;
             n->left = nullptr;                                          //remove everything from n then eventually delete it: 
             n->right = nullptr; 
             n->parent = nullptr; 
@@ -675,9 +676,10 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
             return parentTemp;                                          //return the parent to the delete balance check 
         }
         parentTemp->right = nullptr;                                  //if there was no left child/tree to take care of, we just delete it 
+      cout<<n->a<<"."<<n->b<<" deleted"<<endl;
         n->left = nullptr; 
         n->right = nullptr; 
-        n->parent = nullptr; 
+         n->parent = nullptr; 
         delete n; 
         return parentTemp;                                           //return parent temp
         } //end of if the sucessor is null
@@ -710,6 +712,7 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
 
         successorNode->parent = parentTemp;                               //in either case, set the succesor node parent to the parent temp 
                                                                             //do normal deletion 
+       cout<<n->a<<"."<<n->b<<" deleted"<<endl;
         n->left = nullptr; 
         n->right = nullptr; 
         n->parent = nullptr; 
@@ -724,12 +727,14 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
       Node* nLeftTemp = n->left;           //save the n- left in a temp 
       nLeftTemp->parent = nullptr;         //get rid of it's parent affiliation 
       root = nLeftTemp;                    //set the left temp to the root 
+      cout<<n->a<<"."<<n->b<<" deleted"<<endl;
       n->left = nullptr;                   //clean up node as usual 
       n->right = nullptr; 
       delete n; 
       return nLeftTemp;                    //return the left temp which should be root                
      }
      //at this point n doesn't have a left nor a sucessor meaning it's by itself, so we can just get rid of it and return a nullptr 
+     cout<<n->a<<"."<<n->b<<" deleted"<<endl;
      n->left = nullptr; 
      n->right = nullptr; 
      delete n; 
@@ -760,6 +765,7 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
         successorNode->parent = nullptr;                                    //in either case, set the succesor node parent to the nullptr since it's the root
         root = successorNode;                                               //set the root to the successor node 
                                                                             //do normal deletion 
+       cout<<n->a<<"."<<n->b<<" deleted"<<endl;
         n->left = nullptr; 
         n->right = nullptr; 
         n->parent = nullptr; 
