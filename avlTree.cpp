@@ -664,15 +664,14 @@ AVLTree::Node* AVLTree::getSuccessor(Node* n){
 }
 
 AVLTree::Node* AVLTree::deleteBalanceChecker(Node* n){
-    if(n == nullptr || n==root) return nullptr; 
+    if(n == nullptr ){ return nullptr; } 
     if(n->left == nullptr && n->right == nullptr ) { return n; } 
     if(n->left !=nullptr && n->right == nullptr) {  deleteBalanceChecker(n->left); }
     if(n->right !=nullptr && n->left == nullptr) deleteBalanceChecker(n->right); 
-    if(n->right && n->left){
+    if(n->right && n->left){ 
           if( getHeight(n->right) > getHeight(n->left) ) deleteBalanceChecker(n->right); 
      else if( getHeight(n->left) > getHeight(n->right) ) deleteBalanceChecker(n->left); 
     }
-    
     return deleteBalanceChecker(n->right); 
 }
 
@@ -777,7 +776,11 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
             else parentTemp->left = successorNode;                            //it was the left child  set the left of that parent equal to the sucessor node 
             successorNode->parent = parentTemp;                               //in either case, set the succesor node parent to the parent temp 
         } 
-        
+         
+         if( successorNode == parentTemp){
+   //empty
+         }
+
          if( successorNode == parentTemp && (n->left==nullptr && n->right==nullptr) ){  //if the successor node is equal to the parent temp and there was no kids 
             if(parentTemp->right == n) parentTemp->right = nullptr;     //its the right child set the right of that parent equal to the sucessor node 
             else parentTemp->left = nullptr; 
