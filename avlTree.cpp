@@ -409,6 +409,7 @@ bool AVLTree::approx_search(int a, int b){
 
 //Recursive helper for approx_search
 AVLTree::Node* AVLTree::approx_searcher(int a, int b, Node* n){
+ if(!root) return nullptr;
  if(a == n->a && b == n->b){
      //cout<<a<<"."<<b<<" is equal to "<<n->a<<"."<<n->b<<endl;
     // cout<<"closest to "<<a<<"."<<b<<" is "<<n->a<<"."<<n->b<<endl<<endl;
@@ -519,6 +520,9 @@ AVLTree::Node* AVLTree::searcher(int a, int b, Node* n){
   //first run an approx search 
   //cout<<"Currently in Search, first running an approx search and save that to a temp"<<endl; 
   Node* temp = approx_searcher(a, b, n); 
+   
+  if(temp == nullptr){cout<<a<<"."<<b<<" not found"<<endl; return nullptr;}
+
   if(temp->a == a & temp->b == b){
       cout<<a<<"."<<b<<" found"<<endl;
       return temp; 
