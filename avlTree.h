@@ -50,10 +50,12 @@ class AVLTree{
 
     //Other Utility Functions:
     bool balanceCheck(Node* n);
+    bool deleteBalanceCheck(Node* n); 
     void rotateLeft(Node* problemNode); 
     void rotateRight(Node* problemNode); 
     Node* searcher(int a, int b, Node* n);  
     Node* approx_searcher(int a, int b, Node* n);
+    Node* deleteBalanceChecker(Node* n); 
     Node* insert(int a, int b, Node* n);
     Node* remove(int a, int b, Node* n);
     void in_order(Node* n); 

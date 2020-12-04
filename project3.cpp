@@ -7,6 +7,7 @@
 using namespace std; 
 
 int main(int argc, char* argv[]){
+//int main(){
 //  AVLTree avl = AVLTree(1); 
 //  cout<<endl;
 //  cout<<endl;
@@ -45,6 +46,7 @@ int main(int argc, char* argv[]){
 //  cout<<"DELETE CHECK"<<endl; 
 //  avl.remove(5,0); 
 //  avl.in_order(); 
+
 
 
 //PREPARE FOR SUBMISSION: 
@@ -92,8 +94,57 @@ int main(int argc, char* argv[]){
         func_token = s.substr(0, s.length()); 
         funcArgs.push_back( stoi(func_token) );
         avl.insert(funcArgs[0], funcArgs[1]); 
+    } else if (currentFunction.compare("approx_search")==0){
+        s.erase(0, s.find(func_delimiter) + func_delimiter.length());
+        vector<int> funcArgs; 
+        while((func_pos = s.find(func_delimiter)) != std::string::npos){
+            func_token = s.substr(0, func_pos); 
+            //cout<<"Func Token: "<<func_token<<endl;
+            int arg = stoi(func_token); 
+            funcArgs.push_back(arg); 
+            s.erase(0, func_pos+func_delimiter.length()); 
+        }
+        func_token = s.substr(0, s.length()); 
+        funcArgs.push_back( stoi(func_token) );
+        avl.approx_search(funcArgs[0], funcArgs[1]);   
+    } else if (currentFunction.compare("search")==0){
+        s.erase(0, s.find(func_delimiter) + func_delimiter.length());
+        vector<int> funcArgs; 
+        while((func_pos = s.find(func_delimiter)) != std::string::npos){
+            func_token = s.substr(0, func_pos); 
+            //cout<<"Func Token: "<<func_token<<endl;
+            int arg = stoi(func_token); 
+            funcArgs.push_back(arg); 
+            s.erase(0, func_pos+func_delimiter.length()); 
+        }
+        func_token = s.substr(0, s.length()); 
+        funcArgs.push_back( stoi(func_token) );
+        avl.search(funcArgs[0], funcArgs[1]);   
+    } else if (currentFunction.compare("delete")==0){
+        s.erase(0, s.find(func_delimiter) + func_delimiter.length());
+        vector<int> funcArgs; 
+        while((func_pos = s.find(func_delimiter)) != std::string::npos){
+            func_token = s.substr(0, func_pos); 
+            //cout<<"Func Token: "<<func_token<<endl;
+            int arg = stoi(func_token); 
+            funcArgs.push_back(arg); 
+            s.erase(0, func_pos+func_delimiter.length()); 
+        }
+        func_token = s.substr(0, s.length()); 
+        funcArgs.push_back( stoi(func_token) );
+        avl.remove(funcArgs[0], funcArgs[1]);   
     }
  }
+
+
+// AVLTree avl = AVLTree(1); 
+//  avl.insert(4,5);
+//  avl.insert(4,4);
+//  avl.insert(3,4);
+//  avl.insert(5,0);
+//  avl.in_order(); 
+//  avl.remove(4,4); 
+//  avl.in_order(); 
 
 
   return 0; 

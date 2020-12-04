@@ -616,7 +616,7 @@ AVLTree::Node* AVLTree::getSuccessor(Node* n){
         return temp; 
     } else{
         Node* temp2 = root; 
-	    while(temp2->a != n->a && temp2->b != n->b){
+	    while( numify(n->a, n->b) != numify(temp2->a, temp2->b) ){
             if( numify(n->a, n->b) <= numify(temp2->a, temp2->b)){
                 temp = temp2; 
                 temp2 = temp2->left; 
@@ -625,36 +625,149 @@ AVLTree::Node* AVLTree::getSuccessor(Node* n){
                 temp2 = temp2->right;
             }
 	    }//end of second while 
+        //printNode(temp); 
         return temp; 	
       }
       return root;  
 }
 
+AVLTree::Node* AVLTree::deleteBalanceChecker(Node* n){
+    if(n == nullptr) return nullptr; 
+    if(n->left == nullptr && n->right == nullptr ) return n; 
+    if(n->left && n->right == nullptr)  deleteBalanceChecker(n->left); 
+    if(n->right && n->left == nullptr) deleteBalanceChecker(n->right); 
+    if(n->right && n->left){
+          if( getHeight(n->right) > getHeight(n->left) ) deleteBalanceChecker(n->right); 
+     else if( getHeight(n->left) > getHeight(n->right) ) deleteBalanceChecker(n->left); 
+     else deleteBalanceChecker(n->right); 
+    }
+    return nullptr; 
+}
+
+bool AVLTree::deleteBalanceCheck(Node* n){
+  if(nullptr) return false; //this should only happen if the one thing delete was a sole root
+  return balanceCheck( deleteBalanceChecker(n) ); 
+}
+
 //remove function 
 bool AVLTree::remove(int a, int b){
  if(!root) return false; 
- return 0; 
- //return balanceCheck(remove(a, b, approx_searcher(a,b,root))); 
+ return deleteBalanceCheck(remove(a, b, approx_searcher(a,b,root))); 
 }
 
 //recursive function for remove
-// AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
-//     if(a == n->a && b == n->b){ //it's the node, so we proceed to delete
-//      Node* temp = getSuccessor(n); 
-//      if(n->parent){ //it's not the root 
-//       if(n->parent->left == n) n->parent->left = temp; 
-//       else { n->parent->right = temp; }
-//      }
-//      temp->parent = n->parent; 
-//      //delete everything in n: 
-//      n->parent = nullptr; 
-//      n->left = nullptr; 
-//      n->right = nullptr; 
-//      delete n; 
+AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
+    if(a == n->a && b == n->b){                                       //we found  the node, so we proceed to delete
+     Node* successorNode = getSuccessor(n);                           //first thing we do is get the sucessor
+     Node* temp = n;                                                  //make a copy of the n
 
-//      //return the temp node 
-//      return temp; 
-//     }
-//     return nullptr;
-// }
+     if(n->parent){                                                     //IF there is a parent (aka it's not root)
 
+        Node* parentTemp = n->parent;                                     //save the parent (if it has one)
+        if(successorNode == nullptr){                                    //if that sucessor is a nullptr, we are able to delete it right off the bat 
+        if(temp->left){                                               //if it has anything on the left, make sure you don't throw that away, it won't have anything on the right
+            n->parent->right = temp->left;                              //set the node's parent's right to that
+            temp->left->parent = n->parent;                             //set the left child's parent to node's parent 
+            n->left = nullptr;                                          //remove everything from n then eventually delete it: 
+            n->right = nullptr; 
+            n->parent = nullptr; 
+            delete n; 
+            return parentTemp;                                          //return the parent to the delete balance check 
+        }
+        parentTemp->right = nullptr;                                  //if there was no left child/tree to take care of, we just delete it 
+        n->left = nullptr; 
+        n->right = nullptr; 
+        n->parent = nullptr; 
+        delete n; 
+        return parentTemp;                                           //return parent temp
+        } //end of if the sucessor is null
+                                                                    //if it reaches here, there IS a successor:   
+        if(n->left){                                                  //if n has a left child/tree that needs to be adopted do that 
+            Node* nLeftTemp = n->left;                                    //recrusively add it to the bottom of the left of the sucessor 
+            if(successorNode->left){
+            Node* snrTemp = successorNode->right;                       //set a temp of the successor node left for iterating 
+                while(snrTemp){ 
+                    if(snrTemp->left == nullptr){                           //if it reaches a nullptr 
+                        snrTemp->left = new Node();                           //create a new node there 
+                        snrTemp->left = nLeftTemp;                            //set the new node to the n left 
+                        nLeftTemp->parent = snrTemp;                         //and set the parent of that n left to that thing 
+                    }
+                }
+            } //end of checking if the successor node has a left 
+            else{
+                //if it gets here, then the sucessor node didn't have a left, so we can just stick it on there without a while loop
+                successorNode->left = new Node(); 
+                successorNode->left = nLeftTemp; 
+                nLeftTemp->parent = successorNode; 
+            }
+        } //end of checking if there was a left to adopt in general
+
+        //if it reaches here, there was no left child so we can just focus on doing the main deletion
+        //check if it was a left or right child of it's parent 
+
+        if(parentTemp->right == n) parentTemp->right = successorNode;     //its the right child set the right of that parent equal to the sucessor node 
+        else parentTemp->left = successorNode;                            //it was the left child  set the left of that parent equal to the sucessor node 
+
+        successorNode->parent = parentTemp;                               //in either case, set the succesor node parent to the parent temp 
+                                                                            //do normal deletion 
+        n->left = nullptr; 
+        n->right = nullptr; 
+        n->parent = nullptr; 
+        delete n; 
+        return parentTemp;                                                //at the end return parent temp
+
+     } //end of if we got an actual parent 
+      
+    //if here, that means that its a root 
+    if(successorNode == nullptr){          //first check if the successor node is a nullptr
+     if(n->left){                          //we check if n has a left, if it does, set it as the root 
+      Node* nLeftTemp = n->left;           //save the n- left in a temp 
+      nLeftTemp->parent = nullptr;         //get rid of it's parent affiliation 
+      root = nLeftTemp;                    //set the left temp to the root 
+      n->left = nullptr;                   //clean up node as usual 
+      n->right = nullptr; 
+      delete n; 
+      return nLeftTemp;                    //return the left temp which should be root                
+     }
+     //at this point n doesn't have a left nor a sucessor meaning it's by itself, so we can just get rid of it and return a nullptr 
+     n->left = nullptr; 
+     n->right = nullptr; 
+     delete n; 
+     return nullptr;        
+    }
+
+    //if we reach here, there is a sucessor node, we first check if the root had a left child/tree 
+        if(n->left){                                                  //if n has a left child/tree that needs to be adopted do that 
+            Node* nLeftTemp = n->left;                                    //recrusively add it to the bottom of the left of the sucessor 
+            if(successorNode->left){
+            Node* snrTemp = successorNode->right;                       //set a temp of the successor node left for iterating 
+                while(snrTemp){ 
+                    if(snrTemp->left == nullptr){                           //if it reaches a nullptr 
+                        snrTemp->left = new Node();                           //create a new node there 
+                        snrTemp->left = nLeftTemp;                            //set the new node to the n left 
+                        nLeftTemp->parent = snrTemp;                         //and set the parent of that n left to that thing 
+                    }
+                }
+            } //end of checking if the successor node has a left 
+            else{
+                //if it gets here, then the sucessor node didn't have a left, so we can just stick it on there without a while loop
+                successorNode->left = new Node(); 
+                successorNode->left = nLeftTemp; 
+                nLeftTemp->parent = successorNode; 
+            }
+        } //end of checking if there was a left to adopt in general
+         //if it reached here, there was no child to the left, so we just focus on a deletion 
+        successorNode->parent = nullptr;                                    //in either case, set the succesor node parent to the nullptr since it's the root
+        root = successorNode;                                               //set the root to the successor node 
+                                                                            //do normal deletion 
+        n->left = nullptr; 
+        n->right = nullptr; 
+        n->parent = nullptr; 
+        delete n; 
+        return successorNode;                                                //at the end return parent temp
+
+    } //end of making sure we got the actual node 
+ 
+    return nullptr;
+
+}
