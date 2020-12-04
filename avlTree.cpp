@@ -509,6 +509,7 @@ AVLTree::Node* AVLTree::approx_searcher(int a, int b, Node* n){
 
 bool AVLTree::search(int a, int b){
     if(!root){
+        cout<<a<<"."<<b<<" found"<<endl;
         return false; 
     }
     return searcher(a, b, root);
