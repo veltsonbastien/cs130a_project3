@@ -207,7 +207,7 @@ void AVLTree::rotateRight(Node* problemNode){
        if( (leftNodeTemp->right !=nullptr || leftNodeTemp->left != nullptr)                //If either or isn't null continue checking 
         && (
             (leftNodeTemp->right != nullptr && leftNodeTemp->left != nullptr                //if the left and the right one aren't null 
-             && (getHeight(leftNodeTemp->left) > getHeight(leftNodeTemp->right)))           //and the left is bigger than the right, there's a double rotation
+             && (getHeight(leftNodeTemp->right) > getHeight(leftNodeTemp->left)))           //and the left is bigger than the right, there's a double rotation
         || (leftNodeTemp->right !=nullptr && leftNodeTemp->left == nullptr))                    // or if the left one isn't null but the right one is
         ){            
 
@@ -276,7 +276,7 @@ void AVLTree::rotateRight(Node* problemNode){
         if( (leftNodeTemp->right !=nullptr || leftNodeTemp->left != nullptr)                //If either or isn't null continue checking 
         && (
             (leftNodeTemp->right != nullptr && leftNodeTemp->left != nullptr                //if the left and the right one aren't null 
-             && (getHeight(leftNodeTemp->left) > getHeight(leftNodeTemp->right)))           //and the left is bigger than the right, there's a double rotation
+             && (getHeight(leftNodeTemp->right) > getHeight(leftNodeTemp->left)))           //and the left is bigger than the right, there's a double rotation
         || (leftNodeTemp->right !=nullptr && leftNodeTemp->left == nullptr))                    // or if the left one isn't null but the right one is
         ){            
 
