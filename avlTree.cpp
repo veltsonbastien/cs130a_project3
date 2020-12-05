@@ -24,9 +24,6 @@ void AVLTree::removeAll(Node* n){
  if(n){
      removeAll(n->left);
      removeAll(n->right); 
-     delete n->left; 
-     delete n->right; 
-     delete n->parent;
      delete n; 
  }
 }
