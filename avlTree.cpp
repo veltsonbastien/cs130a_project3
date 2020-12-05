@@ -15,7 +15,21 @@ AVLTree::AVLTree(int k) {
 }
 
 //Destructor 
-//AVLTree::~AVLTree(){}
+AVLTree::~AVLTree(){
+ removeAll(root); 
+}
+
+//Recursive helper for destructor
+void AVLTree::removeAll(Node* n){
+ if(n){
+     removeAll(n->left);
+     removeAll(n->right); 
+     delete n->left; 
+     delete n->right; 
+     delete n->parent;
+     delete n; 
+ }
+}
 
 //Utilities: 
 
@@ -124,7 +138,6 @@ void AVLTree::rotateLeft(Node* problemNode){
             rightNodeTemp->left = new Node(); 
             rightNodeTemp->left = problemNode; 
             problemNode->right = nullptr;                   //problem node's right becomes nullptr because there's no child to adopt
-            
            // rightNode->left = new Node();
            // rightNode->left = problemNode;
            // pre_order(); //do a preorder print to check
@@ -174,7 +187,7 @@ void AVLTree::rotateLeft(Node* problemNode){
             Node*& childToAdopt = rightNodeTemp->left;          //set a temp variable for child to adopt 
             childToAdopt->parent = problemNode;             //problem node becomes the new parent of the adopted node 
             problemNode->right = childToAdopt;              //problem node right child is equal to child that needs to be adopted
-            problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent
+           // problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent
             problemNode->parent = rightNodeTemp;                //problem node parent becomes right node
             rightNodeTemp->left = problemNode;                  //right node's left becomes problemNode
             rightNodeTemp->parent = nullptr;                    //right node's parent becomes a nullptr because it is the new root 
@@ -259,7 +272,7 @@ void AVLTree::rotateRight(Node* problemNode){
             return; //done rotating
         } else{                                          //if no child to adopt,
             problemNode->parent = leftNodeTemp;                //problem node's parent becomes right node 
-            leftNodeTemp->right = new Node(); 
+          //  leftNodeTemp->right = new Node(); 
             leftNodeTemp->right = problemNode; 
             problemNode->left = nullptr;                   //problem node's left becomes nullptr because there's no child to adopt
            // pre_order();
@@ -326,7 +339,7 @@ void AVLTree::rotateRight(Node* problemNode){
         } else{                                             //if no child needs to be adopted
             leftNodeTemp->parent = nullptr;                    //left node's parent is nullptr because it becomes the new root 
             leftNodeTemp->right = problemNode;                  //left node's right becomes the problem node 
-            problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent 
+           // problemNode->parent = new Node();               //create a new node for parent cause it used to be root and there was no parent 
             problemNode->parent = leftNodeTemp;                //problem node's parent becomes left node 
             problemNode->left = nullptr;                   //get rid of any connection problem node had to the left 
             root = leftNodeTemp;                               //set left node to the new root
@@ -742,7 +755,7 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
             } //end of checking if the successor node has a left 
             else{
                 //if it gets here, then the sucessor node didn't have a left, so we can just stick it on there without a while loop
-                successorNode->left = new Node(); 
+               // successorNode->left = new Node(); 
                 successorNode->left = nLeftTemp; 
                 nLeftTemp->parent = successorNode; 
             }
@@ -842,7 +855,7 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
             else{
                 //if it gets here, then the predecessor node didn't have a left, so we can just stick it on there without a while loop 
               if(predecessorNode != nLeftTemp){
-                predecessorNode->left = new Node(); 
+               // predecessorNode->left = new Node(); 
                 predecessorNode->left = nLeftTemp; 
                 nLeftTemp->parent = predecessorNode; 
                 nLeftTemp->right = nullptr; 
@@ -866,7 +879,7 @@ AVLTree::Node* AVLTree::remove(int a, int b, Node* n){
             else{
                 //if it gets here, then the sucessor node didn't have a left, so we can just stick it on there without a while loop 
              if(predecessorNode->right != nRightTemp){
-                predecessorNode->right = new Node(); 
+                //predecessorNode->right = new Node(); 
                 predecessorNode->right = nRightTemp; 
                 nRightTemp->parent = predecessorNode; 
              }

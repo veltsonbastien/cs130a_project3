@@ -14,7 +14,7 @@ class AVLTree{
  public: 
  AVLTree();      //constructor 
  AVLTree(int k); //constructor taking k as a parameter 
- //~AVLTree();     //destructor 
+ ~AVLTree();     //destructor 
  
  //Method Functions: 
  bool insert(int a, int b);
@@ -64,6 +64,7 @@ class AVLTree{
     Node* getSuccessor(Node* n); 
     Node* getPredecessor(Node* n); 
     void printNode(Node* n); 
+    void removeAll(Node* n); 
 }; 
 
 #endif
